@@ -190,12 +190,11 @@
           container.appendChild(card);
         });
 
-      } catch (error) {
-        container.textContent =
-          "Could not load bookings. Check Firestore Rules.";
-      }
-    }
-
+      
+} catch (error) {
+  console.error("Booking Error:", error);
+  container.textContent = error.code + ": " + error.message;
+}
     document.getElementById("logoutBtn").onclick = async () => {
       await signOut(auth);
       location.reload();
