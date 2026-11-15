@@ -104,7 +104,7 @@
 
         await loadBookings();
       } catch (error) {
-        message.textContent = "Login failed. Check your details.";
+        message.textContent = error.code + ": " + error.message;
       }
     };
 
