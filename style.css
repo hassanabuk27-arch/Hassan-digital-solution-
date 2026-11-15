@@ -251,3 +251,44 @@ footer {
 .contact-btn:hover {
   background: #ffffff;
 }
+
+.footer {
+  background: #000000;
+  color: #ffffff;
+  text-align: center;
+  padding: 40px 20px;
+  border-top: 2px solid #D4AF37;
+}
+
+.footer h2 {
+  color: #D4AF37;
+  margin-bottom: 10px;
+}
+
+.footer-links {
+  margin: 25px 0;
+}
+
+.footer-links a {
+  color: #D4AF37;
+  text-decoration: none;
+  margin: 10px;
+  font-weight: bold;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+}
+
+.copyright {
+  font-size: 14px;
+  color: #aaaaaa;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .footer-links a {
+    display: inline-block;
+    margin: 8px;
+  }
+}
