@@ -404,3 +404,10 @@ footer {
   font-weight: bold;
   cursor: pointer;
   }
+#loginBtn {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 10;
+}
