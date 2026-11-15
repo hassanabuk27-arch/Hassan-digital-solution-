@@ -215,3 +215,39 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+.contact {
+  background: #181818;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.contact h2 {
+  color: #D4AF37;
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.contact p {
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.contact-details {
+  margin: 25px 0;
+}
+
+.contact-btn {
+  display: inline-block;
+  background: #D4AF37;
+  color: #000000;
+  padding: 14px 25px;
+  margin: 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.contact-btn:hover {
+  background: #ffffff;
+}
