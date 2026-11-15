@@ -2,7 +2,7 @@
 import {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider
-} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app-check.js";
+} from "https://www.gstatic.comfirebasejs/13.3.0/firebase-app-check.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 
@@ -28,7 +28,7 @@ const app = initializeApp(firebaseConfig);
 // Ka saka ainihin reCAPTCHA Enterprise Site Key a nan
 const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider(
-    "SAKA_SITE_KEY_DINKA_A_NAN"
+    6Lc_bSEuAAAAABlgOExQ0peDsq5ICoJRRYKSTS9E
   ),
   isTokenAutoRefreshEnabled: true
 });
