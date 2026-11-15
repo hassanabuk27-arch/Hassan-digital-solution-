@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hassan Digital Solutions - Admin</title>
+
+  <style>
+    body {
+      background: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #D4AF37;
+    }
+
+    input, button {
+      padding: 13px;
+      margin: 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 7px;
+    }
+
+    button {
+      background: #D4AF37;
+      color: #000;
+      border: none;
+      font-weight: bold;
+    }
+
+    .booking {
+      border: 1px solid #D4AF37;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Hassan Digital Solutions</h1>
+  <h2>Admin Dashboard</h2>
+
+  <div id="login">
+    <h3>Admin Login</h3>
+    <input type="email" id="email" placeholder="Admin Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <p id="message"></p>
+  </div>
+
+  <div id="dashboard" hidden>
+    <h2>Booking Requests</h2>
+    <button id="logoutBtn">Logout</button>
+    <div id="bookings">Loading...</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "hassan-digital-solutions.firebaseapp.com",
+      projectId: "hassan-digital-solutions",
+      storageBucket: "hassan-digital-solutions.firebasestorage.app",
+      messagingSenderId: "416480501753",
+      appId: "1:416480501753:web:b18aa351f39dc9f1a22728"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+
+        document.getElementById("login").hidden = true;
+        document.getElementById("dashboard").hidden = false;
+
+        await loadBookings();
+      } catch (error) {
+        message.textContent = "Login failed. Check your details.";
+      }
+    };
+
+    async function loadBookings() {
+      const container = document.getElementById("bookings");
+
+      try {
+        const q = query(
+          collection(db, "bookings"),
+          orderBy("createdAt", "desc")
+        );
+
+        const result = await getDocs(q);
+        container.innerHTML = "";
+
+        if (result.empty) {
+          container.textContent = "No bookings yet.";
+          return;
+        }
+
+        result.forEach((doc) => {
+          const booking = doc.data();
+          const card = document.createElement("div");
+          card.className = "booking";
+
+          const name = document.createElement("h3");
+          name.textContent = booking.customerName || "No name";
+
+          const service = document.createElement("p");
+          service.textContent = "Service: " + (booking.service || "");
+
+          const details = document.createElement("p");
+          details.textContent = "Details: " + (booking.details || "");
+
+          card.append(name, service, details);
+          container.appendChild(card);
+        });
+      } catch (error) {
+        container.textContent =
+          "Could not load bookings. Check Firestore Rules.";
+      }
+    }
+
+    document.getElementById("logoutBtn").onclick = async () => {
+      await signOut(auth);
+      location.reload();
+    };
+  </script>
+
+</body>
+</html>
