@@ -1,7 +1,9 @@
+
 import {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider
 } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app-check.js";
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 
 import {
@@ -22,33 +24,66 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Ka saka ainihin reCAPTCHA Enterprise Site Key a nan
 const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaEnterpriseProvider("SAKA_SITE_KEY_DINKA_A_NAN"),
+  provider: new ReCaptchaEnterpriseProvider(
+    "SAKA_SITE_KEY_DINKA_A_NAN"
+  ),
   isTokenAutoRefreshEnabled: true
 });
+
 const db = getFirestore(app);
 
-document.getElementById("bookingForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
+const bookingForm = document.getElementById("bookingForm");
 
-  const name = document.getElementById("customerName").value.trim();
-  const service = document.getElementById("service").value;
-  const details = document.getElementById("details").value.trim();
+if (bookingForm) {
+  bookingForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-  try {
-    await addDoc(collection(db, "bookings"), {
-      customerName: name,
-      service: service,
-      details: details,
-      createdAt: serverTimestamp()
-    });
+    const name = document.getElementById("customerName").value.trim();
+    const service = document.getElementById("service").value;
+    const details = document.getElementById("details").value.trim();
 
-    alert("Booking submitted successfully!");
+    if (!name || !service || !details) {
+      alert("Please fill in all booking fields.");
+      return;
+    }
 
-    document.getElementById("bookingForm").reset();
+    const submitButton = bookingForm.querySelector(
+      'button[type="submit"]'
+    );
 
-  } catch (error) {
-    console.error("Booking error:", error);
-    alert("Booking could not be submitted. Please try again later.");
-  }
-});
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+    }
+
+    try {
+      await addDoc(collection(db, "bookings"), {
+        customerName: name,
+        service: service,
+        details: details,
+        createdAt: serverTimestamp()
+      });
+
+      alert("Booking submitted successfully!");
+
+      bookingForm.reset();
+
+    } catch (error) {
+      console.error("Booking error:", error);
+
+      alert(
+        "Booking failed: " + error.code +
+        ". Please try again."
+      );
+
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Booking";
+      }
+    }
+  });
+        }
