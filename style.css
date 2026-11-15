@@ -356,3 +356,51 @@ footer {
 .review-card p {
   color: #ffffff;
 }
+.booking {
+  background: #111111;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.booking h2 {
+  color: #D4AF37;
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.booking p {
+  color: #ffffff;
+  margin-bottom: 25px;
+}
+
+#bookingForm {
+  max-width: 500px;
+  margin: auto;
+}
+
+#bookingForm input,
+#bookingForm select,
+#bookingForm textarea {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #D4AF37;
+  border-radius: 8px;
+  background: #000000;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+#bookingForm textarea {
+  min-height: 120px;
+}
+
+#bookingForm button {
+  background: #D4AF37;
+  color: #000000;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  }
