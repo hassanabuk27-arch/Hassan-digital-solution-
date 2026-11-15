@@ -1,25 +1,46 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 
-// Hassan Digital Solutions
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
 
-console.log("Welcome to Hassan Digital Solutions!");
+const firebaseConfig = {
+  apiKey: "AIzaSyBOYyXf6ieMhcMNYgn1HBvxjAp3NEd6NDM",
+  authDomain: "hassan-digital-solutions.firebaseapp.com",
+  projectId: "hassan-digital-solutions",
+  storageBucket: "hassan-digital-solutions.firebasestorage.app",
+  messagingSenderId: "416480501753",
+  appId: "1:416480501753:web:b18aa351f39dc9f1a22728",
+  measurementId: "G-00N2S3HCS7"
+};
 
-function welcomeMessage() {
-  alert("Welcome to Hassan Digital Solutions!");
-}
-document.getElementById("bookingForm").addEventListener("submit", function(event) {
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("bookingForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  const name = document.getElementById("customerName").value;
+  const name = document.getElementById("customerName").value.trim();
   const service = document.getElementById("service").value;
-  const details = document.getElementById("details").value;
+  const details = document.getElementById("details").value.trim();
 
-  const message = `New Booking Request
+  try {
+    await addDoc(collection(db, "bookings"), {
+      customerName: name,
+      service: service,
+      details: details,
+      createdAt: serverTimestamp()
+    });
 
-Name: ${name}
-Service: ${service}
-Details: ${details}`;
+    alert("Booking submitted successfully!");
 
-  const whatsappURL = "https://wa.me/2347038682870?text=" + encodeURIComponent(message);
+    document.getElementById("bookingForm").reset();
 
-  window.open(whatsappURL, "_blank");
+  } catch (error) {
+    console.error("Booking error:", error);
+    alert("Booking could not be submitted. Please try again later.");
+  }
 });
