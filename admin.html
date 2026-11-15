@@ -14,50 +14,45 @@
       padding: 20px;
     }
 
-    h1, h2 {
+    h1, h2, h3 {
       color: #D4AF37;
       text-align: center;
     }
 
-    #login {
-      display: block;
-      max-width: 450px;
+    #login, #dashboard {
+      max-width: 500px;
       margin: 30px auto;
       padding: 20px;
       border: 1px solid #D4AF37;
       border-radius: 12px;
     }
 
-    #login h3 {
-      color: #D4AF37;
-      text-align: center;
-    }
-
-    #login input {
+    input {
       display: block;
-      visibility: visible;
       width: 100%;
       padding: 14px;
       margin: 12px 0;
       box-sizing: border-box;
-      background: white;
-      color: black;
       border: 1px solid #D4AF37;
       border-radius: 7px;
       font-size: 16px;
     }
 
     button {
+      width: 100%;
       padding: 14px;
       margin: 10px 0;
-      width: 100%;
-      border-radius: 7px;
       background: #D4AF37;
-      color: #000;
+      color: black;
       border: none;
+      border-radius: 7px;
       font-weight: bold;
       font-size: 16px;
       cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
     }
 
     .booking {
@@ -65,6 +60,15 @@
       padding: 15px;
       margin: 15px 0;
       border-radius: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    #message, #bookings {
+      overflow-wrap: anywhere;
+    }
+
+    [hidden] {
+      display: none !important;
     }
   </style>
 </head>
@@ -77,24 +81,33 @@
   <div id="login">
     <h3>Admin Login</h3>
 
-    <input type="email" id="email"
-      placeholder="Admin Email" autocomplete="username">
+    <input
+      type="email"
+      id="email"
+      placeholder="Admin Email"
+      autocomplete="username"
+    >
 
-    <input type="password" id="password"
-      placeholder="Password" autocomplete="current-password">
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
 
     <button id="loginBtn" type="button">Login</button>
-
     <p id="message"></p>
   </div>
 
   <div id="dashboard" hidden>
     <h2>Booking Requests</h2>
-    <button id="logoutBtn">Logout</button>
+    <button id="refreshBtn" type="button">Refresh Bookings</button>
+    <button id="logoutBtn" type="button">Logout</button>
     <div id="bookings">Loading...</div>
   </div>
 
   <script type="module">
+
     import { initializeApp }
       from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 
@@ -113,50 +126,25 @@
     } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBOYyXf6ieMhcMNYgn1HBvxjAp3NEd6NDM",
-  authDomain: "hassan-digital-solutions.firebaseapp.com",
-  projectId: "hassan-digital-solutions",
-  storageBucket: "hassan-digital-solutions.firebasestorage.app",
-  messagingSenderId: "416480501753",
-  appId: "1:416480501753:web:b18aa351f39dc9f1a22728"
-};
+      apiKey: "AIzaSyBOYyXf6ieMhcMNYgn1HBvxjAp3NEd6NDM",
+      authDomain: "hassan-digital-solutions.firebaseapp.com",
+      projectId: "hassan-digital-solutions",
+      storageBucket: "hassan-digital-solutions.firebasestorage.app",
+      messagingSenderId: "416480501753",
+      appId: "1:416480501753:web:b18aa351f39dc9f1a22728",
+      measurementId: "G-00N2S3HCS7"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     const loginBtn = document.getElementById("loginBtn");
-
-    loginBtn.addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const message = document.getElementById("message");
-
-      if (!email || !password) {
-        message.textContent = "Enter your email and password.";
-        return;
-      }
-
-      loginBtn.disabled = true;
-      message.textContent = "Logging in...";
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-
-        document.getElementById("login").hidden = true;
-        document.getElementById("dashboard").hidden = false;
-
-        await loadBookings();
-
-      } catch (error) {
-        message.textContent = error.code + ": " + error.message;
-      } finally {
-        loginBtn.disabled = false;
-      }
-    });
+    const message = document.getElementById("message");
 
     async function loadBookings() {
       const container = document.getElementById("bookings");
+      container.textContent = "Loading bookings...";
 
       try {
         const q = query(
@@ -173,32 +161,71 @@
         }
 
         result.forEach((doc) => {
-          const booking = doc.data();
+          const data = doc.data();
+
           const card = document.createElement("div");
           card.className = "booking";
 
           const name = document.createElement("h3");
-          name.textContent = booking.customerName || "No name";
+          name.textContent = data.customerName || "No name";
 
           const service = document.createElement("p");
-          service.textContent = "Service: " + (booking.service || "");
+          service.textContent = "Service: " + (data.service || "");
 
           const details = document.createElement("p");
-          details.textContent = "Details: " + (booking.details || "");
+          details.textContent = "Details: " + (data.details || "");
 
           card.append(name, service, details);
           container.appendChild(card);
         });
 
-      
-} catch (error) {
-  console.error("Booking Error:", error);
-  container.textContent = error.code + ": " + error.message;
-}
-    document.getElementById("logoutBtn").onclick = async () => {
-      await signOut(auth);
-      location.reload();
-    };
+      } catch (error) {
+        console.error("Booking error:", error);
+        container.textContent =
+          error.code + ": " + error.message;
+      }
+    }
+
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        message.textContent = "Enter email and password.";
+        return;
+      }
+
+      loginBtn.disabled = true;
+      message.textContent = "Logging in...";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+
+        document.getElementById("login").hidden = true;
+        document.getElementById("dashboard").hidden = false;
+
+        await loadBookings();
+
+      } catch (error) {
+        console.error("Login error:", error);
+        message.textContent = error.code + ": " + error.message;
+
+      } finally {
+        loginBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("refreshBtn").addEventListener(
+      "click", loadBookings
+    );
+
+    document.getElementById("logoutBtn").addEventListener(
+      "click", async () => {
+        await signOut(auth);
+        location.reload();
+      }
+    );
+
   </script>
 
 </body>
