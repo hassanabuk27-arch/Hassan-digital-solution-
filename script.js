@@ -22,6 +22,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider("SAKA_SITE_KEY_DINKA_A_NAN"),
+  isTokenAutoRefreshEnabled: true
+});
 const db = getFirestore(app);
 
 document.getElementById("bookingForm").addEventListener("submit", async function(event) {
