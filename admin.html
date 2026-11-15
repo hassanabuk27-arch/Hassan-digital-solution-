@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,21 +16,48 @@
 
     h1, h2 {
       color: #D4AF37;
+      text-align: center;
     }
 
-    input, button {
-      padding: 13px;
-      margin: 8px 0;
+    #login {
+      display: block;
+      max-width: 450px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #D4AF37;
+      border-radius: 12px;
+    }
+
+    #login h3 {
+      color: #D4AF37;
+      text-align: center;
+    }
+
+    #login input {
+      display: block;
+      visibility: visible;
       width: 100%;
+      padding: 14px;
+      margin: 12px 0;
       box-sizing: border-box;
+      background: white;
+      color: black;
+      border: 1px solid #D4AF37;
       border-radius: 7px;
+      font-size: 16px;
     }
 
     button {
+      padding: 14px;
+      margin: 10px 0;
+      width: 100%;
+      border-radius: 7px;
       background: #D4AF37;
       color: #000;
       border: none;
       font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
     }
 
     .booking {
@@ -47,23 +75,17 @@
   <h2>Admin Dashboard</h2>
 
   <div id="login">
-  <h3>Admin Login</h3>
+    <h3>Admin Login</h3>
 
-  <input
-    type="email"
-    id="email"
-    placeholder="Admin Email"
-  >
+    <input type="email" id="email"
+      placeholder="Admin Email" autocomplete="username">
 
-  <input
-    type="password"
-    id="password"
-    placeholder="Password"
-  >
+    <input type="password" id="password"
+      placeholder="Password" autocomplete="current-password">
 
-  <button id="loginBtn" type="button">Login</button>
+    <button id="loginBtn" type="button">Login</button>
 
-  <p id="message"></p>
+    <p id="message"></p>
   </div>
 
   <div id="dashboard" hidden>
@@ -91,7 +113,7 @@
     } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBOYyXf6ieMhcMNYgn1HBvxjAp3NEd6NDM",
+      apiKey: apiKey: "AIzaSyBOYyXf6ieMhcMNYgn1HBvxjAp3NEd6NDM",
       authDomain: "hassan-digital-solutions.firebaseapp.com",
       projectId: "hassan-digital-solutions",
       storageBucket: "hassan-digital-solutions.firebasestorage.app",
@@ -103,10 +125,20 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("email").value;
+    const loginBtn = document.getElementById("loginBtn");
+
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const message = document.getElementById("message");
+
+      if (!email || !password) {
+        message.textContent = "Enter your email and password.";
+        return;
+      }
+
+      loginBtn.disabled = true;
+      message.textContent = "Logging in...";
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
@@ -115,10 +147,13 @@
         document.getElementById("dashboard").hidden = false;
 
         await loadBookings();
+
       } catch (error) {
         message.textContent = error.code + ": " + error.message;
+      } finally {
+        loginBtn.disabled = false;
       }
-    };
+    });
 
     async function loadBookings() {
       const container = document.getElementById("bookings");
@@ -154,6 +189,7 @@
           card.append(name, service, details);
           container.appendChild(card);
         });
+
       } catch (error) {
         container.textContent =
           "Could not load bookings. Check Firestore Rules.";
