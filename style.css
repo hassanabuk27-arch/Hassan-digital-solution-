@@ -322,3 +322,37 @@ footer {
   color: #D4AF37;
   margin-bottom: 10px;
 }
+.reviews {
+  background: #181818;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.reviews h2 {
+  color: #D4AF37;
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.reviews-intro {
+  color: #ffffff;
+  margin-bottom: 25px;
+}
+
+.review-card {
+  background: #000000;
+  border: 1px solid #D4AF37;
+  border-radius: 12px;
+  padding: 30px 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+.review-card h3 {
+  color: #D4AF37;
+  margin-bottom: 12px;
+}
+
+.review-card p {
+  color: #ffffff;
+}
