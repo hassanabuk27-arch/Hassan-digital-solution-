@@ -1,3 +1,7 @@
+import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider
+} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app-check.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 
 import {
